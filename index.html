@@ -471,6 +471,7 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
   <div class="grab"></div>
   <div class="ph"><h2>✨ Apa yang baru</h2><button class="x" data-close>✕</button></div>
   <ul class="newl">
+    <li>🙂 <b>Buka dengan Face ID</b> — tidak perlu ketik PIN lagi. Aktifkan di ⚙️ Atur › Kunci aplikasi.</li>
     <li>✨ <b>Nama baru: Dompet Mami Uci.</b> Tombol <b>🌙 / ☀️</b> di pojok atas untuk ganti mode gelap & terang. Beranda dibuat lebih ringkas.</li>
     <li>🔒 <b>Kunci PIN</b> (bisa juga Face ID / sidik jari) — buka ⚙️ Atur.</li>
     <li>↩️ <b>Urungkan</b> — salah hapus? Tekan "Urungkan" di bawah layar.</li>
@@ -491,7 +492,7 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
   <div class="lg">👛</div><b id="lkT">Masukkan PIN</b><div class="hn" id="lkHint"></div>
   <div class="dots" id="dots"></div>
   <div class="lkkp" id="lkKp"></div>
-  <button class="btn ghost hide" id="lkBio">🙂 Buka dengan Face ID / sidik jari</button>
+  <button class="btn ghost hide" id="lkBio">🙂 Buka dengan Face ID</button>
   <button class="lnk" id="lkForgot">Lupa PIN?</button>
 </div></div>
 
@@ -499,7 +500,7 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
 <script>
 (()=>{
 'use strict';
-const APP_VER='3.1';
+const APP_VER='3.2';
 const KEY='dompetKeluarga_v1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const DEF_CATS=[{id:'rumah',e:'🏠',n:'Kebutuhan Rumah',c:'--c0',b:0,s:'s1'},{id:'anak',e:'🧒',n:'Kebutuhan Anak',c:'--c1',b:0,s:'s1'},{id:'jajan',e:'🍡',n:'Jajan',c:'--c2',b:0,s:'s2'},{id:'lain',e:'📦',n:'Lain-lain (tidak rutin)',c:'--c3',b:0,s:'s2'},{id:'rutin',e:'🧾',n:'Pengeluaran Rutin',c:'--c4',b:0,s:'s1'},{id:'cicil',e:'💳',n:'Cicilan',c:'--c6',b:0,s:'s1'}];
@@ -971,7 +972,7 @@ async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEnco
 const b64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))); const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function bioAvail(){ try{ return !!(window.PublicKeyCredential&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }catch(e){ return false; } }
 let PINBUF='', LOCKED=false;
-function lockNow(){ if(!S.lock) return; LOCKED=true; PINBUF=''; drawDots(); $('#lkHint').textContent=''; $('#lock').classList.remove('hide'); $('#lkBio').classList.toggle('hide',!S.lock.bio); }
+function lockNow(){ if(!S.lock) return; LOCKED=true; PINBUF=''; drawDots(); $('#lkHint').textContent=''; $('#lock').classList.remove('hide'); $('#lkBio').classList.toggle('hide',!S.lock.bio); $('#lkT').textContent=S.lock.bio?'Buka dengan Face ID atau PIN':'Masukkan PIN'; if(S.lock.bio) setTimeout(()=>bioUnlock(true),400); }
 function unlock(){ LOCKED=false; $('#lock').classList.add('hide'); }
 function drawDots(err){ $('#dots').innerHTML=Array.from({length:S.lock?S.lock.len:4},(_,i)=>`<i class="${i<PINBUF.length?'on':''}"></i>`).join(''); $('#dots').classList.toggle('err',!!err); }
 $('#lkKp').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>`<button data-k="${k}" class="${k===''||k==='⌫'?'nob':''}">${k}</button>`).join('');
@@ -979,20 +980,28 @@ $$('#lkKp button').forEach(b=>b.onclick=async()=>{ const k=b.dataset.k; if(!k||!
   if(k==='⌫'){ PINBUF=PINBUF.slice(0,-1); drawDots(); return; } if(PINBUF.length>=S.lock.len) return; PINBUF+=k; drawDots();
   if(PINBUF.length===S.lock.len){ const h=await sha(S.lock.salt+PINBUF); if(h===S.lock.h) unlock(); else { PINBUF=''; drawDots(true); try{ navigator.vibrate&&navigator.vibrate([60,40,60]); }catch(_){} setTimeout(()=>drawDots(),500); } } });
 $('#lkForgot').onclick=()=>{ $('#lkHint').textContent=S.lock&&S.lock.hint?'Petunjuk: '+S.lock.hint:'Tidak ada petunjuk. Hubungi yang memasang PIN.'; };
-$('#lkBio').onclick=async()=>{ if(!S.lock||!S.lock.bio) return; try{ await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:unb64(S.lock.bio)}],userVerification:'required',timeout:60000}}); unlock(); }catch(e){ toast('Face ID / sidik jari gagal, pakai PIN'); } };
+let bioBusy=false;
+async function bioUnlock(auto){ if(!S.lock||!S.lock.bio||bioBusy) return; bioBusy=true;
+  try{ await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:unb64(S.lock.bio),transports:['internal']}],userVerification:'required',timeout:60000}}); unlock(); }
+  catch(e){ if(!auto) toast('Face ID belum berhasil — coba lagi atau pakai PIN'); } finally{ bioBusy=false; } }
+async function bioRegister(){ const c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'Dompet Mami Uci'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:(S.name||'Mami Uci')+' · Dompet',displayName:S.name||'Dompet Mami Uci'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'preferred'},timeout:60000}});
+  S.lock.bio=b64(c.rawId); save(); }
+async function askBio(){ if(!S.lock||S.lock.bio||!await bioAvail()) return; if(!await ask({t:'🙂 Pakai Face ID juga?',m:'Supaya tidak perlu ketik PIN setiap kali — cukup lihat ke HP. PIN tetap bisa dipakai kapan saja.<br><br>iPhone akan menanyakan "simpan kunci sandi (passkey)" — pilih <b>Lanjutkan</b>.',ok:'Aktifkan Face ID',no:'Nanti saja'})) return;
+  try{ await bioRegister(); toast('🙂 Face ID aktif'); }catch(e){ toast('Face ID tidak bisa diaktifkan di HP ini'); } if(!$('#vSet').classList.contains('hide')) renderSet(); }
+$('#lkBio').onclick=()=>bioUnlock(false);
 let hidAt=0; document.addEventListener('visibilitychange',()=>{ if(document.hidden) hidAt=Date.now(); else if(S.lock&&!LOCKED&&hidAt&&Date.now()-hidAt>60000) lockNow(); });
 async function setPin(){ const r=await ask({t:S.lock?'Ubah PIN':'Pasang PIN',m:'PIN 4–6 angka. Simpan baik-baik — PIN tidak bisa dipulihkan.',f:[{id:'p1',type:'pin',l:'PIN baru'},{id:'p2',type:'pin',l:'Ulangi PIN'},{id:'hint',type:'text',l:'Petunjuk kalau lupa (opsional)',p:'mis. tanggal lahir si kembar'}],ok:'Simpan PIN'});
   if(!r) return; if(!/^\d{4,6}$/.test(r.p1)) return toast('PIN harus 4–6 angka'); if(r.p1!==r.p2) return toast('Kedua PIN tidak sama');
-  const salt=uid(); S.lock={h:await sha(salt+r.p1),salt,len:r.p1.length,hint:r.hint,bio:S.lock&&S.lock.bio||null}; save(); renderSet(); toast('🔒 PIN terpasang'); }
+  const salt=uid(); S.lock={h:await sha(salt+r.p1),salt,len:r.p1.length,hint:r.hint,bio:S.lock&&S.lock.bio||null}; save(); renderSet(); toast('🔒 PIN terpasang'); setTimeout(askBio,700); }
 async function checkPin(t){ const r=await ask({t,f:[{id:'p',type:'pin',l:'PIN sekarang'}],ok:'Lanjut'}); if(!r) return false; if(await sha(S.lock.salt+r.p)!==S.lock.h){ toast('PIN salah'); return false; } return true; }
 async function renderLock(){ const box=$('#lockBox'), av=await bioAvail();
   if(!S.lock){ box.innerHTML=`<div class="mute" style="margin-bottom:8px">Belum dikunci. Siapa pun yang memegang HP bisa membuka catatan keuangan.</div><button class="btn" id="pinSet">🔒 Pasang PIN</button>`; $('#pinSet').onclick=setPin; return; }
   box.innerHTML=`<div class="mute" style="margin-bottom:8px">✅ Terkunci dengan PIN ${S.lock.len} angka. Aplikasi minta PIN saat dibuka & setelah ditinggal lebih dari 1 menit.</div>
-    ${av?`<div class="tog"><span>Buka dengan Face ID / sidik jari</span><input type="checkbox" class="sw" id="bioSw" ${S.lock.bio?'checked':''}></div>`:''}
+    ${av?`<div class="tog"><span>🙂 Buka dengan Face ID<small>${S.lock.bio?'Aktif — cukup lihat ke HP saat membuka aplikasi':'Tidak perlu ketik PIN setiap kali'}</small></span><input type="checkbox" class="sw" id="bioSw" ${S.lock.bio?'checked':''}></div>`:`<div class="mute">Face ID belum tersedia di sini. Pastikan aplikasi dibuka dari ikon di layar utama iPhone (iOS 16 ke atas) dan Face ID sudah aktif di Pengaturan iPhone.</div>`}
     <div class="row2" style="margin-top:8px"><button class="btn ghost" id="pinChg">Ubah PIN</button><button class="btn red" id="pinOff">Matikan kunci</button></div>`;
   $('#pinChg').onclick=async()=>{ if(await checkPin('Ubah PIN')) setPin(); };
   $('#pinOff').onclick=async()=>{ if(!await checkPin('Matikan kunci')) return; S.lock=null; save(); renderSet(); toast('🔓 Kunci dimatikan'); };
-  const sw=$('#bioSw'); if(sw) sw.onchange=async()=>{ if(sw.checked){ try{ const c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'Dompet Mami Uci'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'dompet',displayName:S.name||'Dompet Mami Uci'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000}}); S.lock.bio=b64(c.rawId); save(); toast('🙂 Face ID / sidik jari aktif'); }catch(e){ sw.checked=false; toast('Tidak bisa mengaktifkan di HP ini'); } } else { S.lock.bio=null; save(); } }; }
+  const sw=$('#bioSw'); if(sw) sw.onchange=async()=>{ if(sw.checked){ try{ await bioRegister(); toast('🙂 Face ID aktif'); }catch(e){ sw.checked=false; toast('Face ID tidak bisa diaktifkan di HP ini'); } } else { S.lock.bio=null; save(); toast('Face ID dimatikan, pakai PIN'); } renderSet(); }; }
 
 /* ---------- atur ---------- */
 function renderSrcEdit(){
