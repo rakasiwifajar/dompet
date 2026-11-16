@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#1565c0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dompet">
+<meta name="apple-mobile-web-app-title" content="Dompet Mami Uci">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Dompet Keluarga</title>
+<title>Dompet Mami Uci</title>
 <style>
 :root{--bg:#070d1a;--sheet:rgba(10,16,30,.84);--card:rgba(255,255,255,.07);--card2:rgba(255,255,255,.11);--ink:#eef3fb;--mute:#97a6bd;--line:rgba(255,255,255,.10);
   --pri:#2f8cff;--pri2:#5ab0ff;--out:#ff6b6b;--in:#3ddc97;--r:22px;
@@ -232,13 +232,24 @@ body.bigtext main,body.bigtext .sheet .pn{zoom:1.1}
 #trT button{font-size:13px}
 body.light header .gbtn,body.light header .seg,body.light header .pnav{background:linear-gradient(140deg,rgba(255,255,255,.18),rgba(255,255,255,.06)),rgba(255,255,255,.06);border-color:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 8px 20px rgba(0,0,0,.18)}
 body.light header .seg button.on{color:#0a3a75}
+/* v3.1 — lebih ringkas */
+.hbtns{display:flex;gap:8px}
+.gbtn.round{width:40px;height:40px;font-size:17px}
+.sec{margin:24px 4px 10px}.sec h3{font-size:16px;font-weight:800}
+.src .sisa{font-size:19px;margin:4px 0 2px}
+.quick{gap:8px;padding:10px}.tile{padding:12px 2px 10px;font-size:12px}
+.sum .row3 b{font-size:14px}
+body.light{--sheet:rgba(248,250,253,.82)}
+body.light .tile span,body.light .gbtn.act span{filter:none}
+body.light .bh,body.light .sum .row3>div{border-color:rgba(15,27,45,.06)}
+body.light .it{border-bottom-color:rgba(15,27,45,.06)}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <div class="hrow"><div class="brand"><span class="logo">👛</span><div><div class="title" id="appTitle">Dompet Keluarga</div><div class="hello" id="hello">Halo</div></div></div>
-      <button class="gbtn round" id="hSet" aria-label="Atur">⚙️</button></div>
+    <div class="hrow"><div class="brand"><span class="logo">👛</span><div><div class="title" id="appTitle">Dompet Mami Uci</div><div class="hello" id="hello">Halo</div></div></div>
+      <div class="hbtns"><button class="gbtn round" id="hTheme" aria-label="Ganti mode gelap/terang">🌙</button><button class="gbtn round" id="hSet" aria-label="Atur">⚙️</button></div></div>
     <div class="hero">
       <div class="hl">
         <div class="hlbl" id="heroLbl">Sisa uang bulan ini</div>
@@ -261,14 +272,10 @@ body.light header .seg button.on{color:#0a3a75}
   <!-- RINGKASAN -->
   <section id="vHome">
     <div class="panel quick" id="quick">
-      <button class="tile" data-q="out"><span>💸</span>Catat Keluar</button>
-      <button class="tile" data-q="in"><span>💰</span>Catat Masuk</button>
+      <button class="tile" data-q="in"><span>💰</span>Uang Masuk</button>
       <button class="tile" data-q="tr"><span>🔁</span>Pindah Dana</button>
       <button class="tile" data-q="bill"><span>🧾</span>Tagihan</button>
       <button class="tile" data-q="goal"><span>🎯</span>Tabungan</button>
-      <button class="tile" data-q="list"><span>📒</span>Riwayat</button>
-      <button class="tile" data-q="rep"><span>📊</span>Laporan</button>
-      <button class="tile" data-q="bak"><span>💾</span>Cadangan</button>
     </div>
     <div class="sum">
       <div id="amanBox" class="aman hide"></div>
@@ -279,16 +286,16 @@ body.light header .seg button.on{color:#0a3a75}
       <div class="pmrow" id="pmRow"></div>
       <div class="cmp" id="cmp"></div>
     </div>
-    <div class="sec"><h3>Dompet</h3><a id="goTr">🔁 Pindah dana</a></div>
+    <div class="sec"><h3>Saldo sekarang</h3><a id="goTr">Pindah dana ›</a></div>
     <div class="srcs" id="wals"></div>
-    <div class="sec"><h3>Sumber dana</h3><a id="goSrc">Atur peruntukan</a></div>
+    <div class="sec"><h3>Sumber dana</h3><a id="goSrc">Atur ›</a></div>
     <div class="srcs" id="srcs"></div>
-    <div class="sec"><h3 id="billMiniT">Tagihan bulan ini</h3><a id="goBill">Kelola</a></div>
+    <div class="sec"><h3 id="billMiniT">Tagihan bulan ini</h3><a id="goBill">Lihat ›</a></div>
     <div id="billMini"></div>
-    <div id="goalMiniBox" class="hide"><div class="sec"><h3>🎯 Tabungan</h3><a id="goGoal">Kelola</a></div><div id="goalMini"></div></div>
-    <div class="sec"><h3>Per kategori</h3><a id="goBudget">Atur anggaran</a></div>
+    <div id="goalMiniBox" class="hide"><div class="sec"><h3>🎯 Tabungan</h3><a id="goGoal">Lihat ›</a></div><div id="goalMini"></div></div>
+    <div class="sec"><h3>Per kategori</h3><a id="goBudget">Anggaran ›</a></div>
     <div class="cats" id="cats"></div>
-    <div class="sec"><h3>Catatan</h3><a id="goAll">Lihat semua</a></div>
+    <div class="sec"><h3>Catatan terakhir</h3><a id="goAll">Semua ›</a></div>
     <div id="recent"></div>
   </section>
 
@@ -327,6 +334,10 @@ body.light header .seg button.on{color:#0a3a75}
 
   <!-- ATUR -->
   <section id="vSet" class="hide">
+    <div class="card"><h4>🎨 Tampilan</h4>
+      <div class="lb">Mode</div><div class="opts" id="optTheme"><button data-v="light">☀️ Mode terang</button><button data-v="dark">🌙 Mode gelap</button><button data-v="auto">📱 Ikut HP</button></div>
+      <div class="tog" style="margin-top:8px"><span>Tulisan lebih besar</span><input type="checkbox" class="sw" id="optBig"></div>
+      <div class="tog"><span>Mode ringan<small>Matikan efek kaca, untuk HP lama yang terasa berat</small></span><input type="checkbox" class="sw" id="optLite"></div></div>
     <div class="card"><h4>👤 Nama</h4>
       <div class="fld"><input id="setName" placeholder="Nama pemakai, mis. Mami Uci"></div>
       <div class="fld"><input id="setTitle" placeholder="Judul aplikasi"></div></div>
@@ -339,10 +350,6 @@ body.light header .seg button.on{color:#0a3a75}
     <div class="card"><h4>🗂️ Kategori pengeluaran & anggaran bulanan</h4>
       <div class="mute" style="margin-bottom:8px">Ubah nama/emoji, isi anggaran per bulan (kosongkan kalau tidak perlu).</div>
       <div id="catEdit"></div><button class="btn ghost" id="addCat" style="margin-top:6px">＋ Tambah kategori</button></div>
-    <div class="card"><h4>🎨 Tampilan</h4>
-      <div class="lb">Tema</div><div class="opts" id="optTheme"><button data-v="dark">🌙 Gelap</button><button data-v="light">☀️ Terang</button><button data-v="auto">📱 Ikut HP</button></div>
-      <div class="tog" style="margin-top:8px"><span>Tulisan lebih besar</span><input type="checkbox" class="sw" id="optBig"></div>
-      <div class="tog"><span>Mode ringan<small>Matikan efek kaca, untuk HP lama yang terasa berat</small></span><input type="checkbox" class="sw" id="optLite"></div></div>
     <div class="card" id="bakCard"><h4>💾 Cadangan data</h4>
       <div class="mute" style="margin-bottom:10px">Data tersimpan di HP ini. Kirim cadangan ke WhatsApp sendiri atau Google Drive supaya aman kalau HP rusak/hilang. Foto struk tidak ikut dalam file cadangan.</div>
       <div class="row2"><button class="btn ghost" id="expJson">💾 Kirim cadangan</button><button class="btn ghost" id="impJson">📂 Pulihkan / gabung</button></div>
@@ -464,6 +471,7 @@ body.light header .seg button.on{color:#0a3a75}
   <div class="grab"></div>
   <div class="ph"><h2>✨ Apa yang baru</h2><button class="x" data-close>✕</button></div>
   <ul class="newl">
+    <li>✨ <b>Nama baru: Dompet Mami Uci.</b> Tombol <b>🌙 / ☀️</b> di pojok atas untuk ganti mode gelap & terang. Beranda dibuat lebih ringkas.</li>
     <li>🔒 <b>Kunci PIN</b> (bisa juga Face ID / sidik jari) — buka ⚙️ Atur.</li>
     <li>↩️ <b>Urungkan</b> — salah hapus? Tekan "Urungkan" di bawah layar.</li>
     <li>💾 <b>Cadangan otomatis</b> 7 hari di HP + pengingat kirim cadangan tiap minggu.</li>
@@ -491,7 +499,7 @@ body.light header .seg button.on{color:#0a3a75}
 <script>
 (()=>{
 'use strict';
-const APP_VER='3.0';
+const APP_VER='3.1';
 const KEY='dompetKeluarga_v1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const DEF_CATS=[{id:'rumah',e:'🏠',n:'Kebutuhan Rumah',c:'--c0',b:0,s:'s1'},{id:'anak',e:'🧒',n:'Kebutuhan Anak',c:'--c1',b:0,s:'s1'},{id:'jajan',e:'🍡',n:'Jajan',c:'--c2',b:0,s:'s2'},{id:'lain',e:'📦',n:'Lain-lain (tidak rutin)',c:'--c3',b:0,s:'s2'},{id:'rutin',e:'🧾',n:'Pengeluaran Rutin',c:'--c4',b:0,s:'s1'},{id:'cicil',e:'💳',n:'Cicilan',c:'--c6',b:0,s:'s1'}];
@@ -517,10 +525,10 @@ const idbKeys=s=>idbOp(s,'readonly',st=>st.getAllKeys());
 
 let S=load();
 function load(){ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)); }catch(e){}
-  if(!s||!s.tx) s={name:'',title:'Dompet Keluarga',cats:clone(DEF_CATS),tx:[],lastBak:0,onb:false,seenVer:APP_VER};
+  if(!s||!s.tx) s={name:'',title:'Dompet Mami Uci',cats:clone(DEF_CATS),tx:[],lastBak:0,onb:false,seenVer:APP_VER};
   return migrate(s); }
 function migrate(s){ s.cats=s.cats||clone(DEF_CATS); s.src=s.src||clone(DEF_SRC); s.bills=s.bills||[]; s.loans=s.loans||[]; s.incs=s.incs||[]; s.goals=s.goals||[];
-  s.pm=s.pm||'tunai'; s.pmIn=s.pmIn||'nontunai'; s.wal=s.wal||{tunai:0,nontunai:0}; s.theme=s.theme||'dark';
+  if(!s.title||s.title==='Dompet Keluarga') s.title='Dompet Mami Uci'; s.pm=s.pm||'tunai'; s.pmIn=s.pmIn||'nontunai'; s.wal=s.wal||{tunai:0,nontunai:0}; s.theme=s.theme||'dark';
   if(s.onb===undefined) s.onb=s.tx.length>0||!!s.name; if(s.bakRemind===undefined) s.bakRemind=true;
   s.src.forEach(x=>{ if(x.carry===undefined) x.carry=true; });
   ['rutin','cicil'].forEach(id=>{ if(!s.cats.some(c=>c.id===id)){ const d=clone(DEF_CATS.find(c=>c.id===id)); const used=s.cats.map(c=>c.c); if(used.includes(d.c)) d.c=COLORS.find(c=>!used.includes(c))||d.c; s.cats.push(d); } });
@@ -602,7 +610,7 @@ function srcState(s,r,L){ const fl=srcFlow(s.id,L); const isM=P.t==='m'; const c
 function render(){
   applyLook();
   $('#hello').textContent=(()=>{ const h=new Date().getHours(); const s=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'; return s+(S.name?', '+S.name:''); })();
-  $('#appTitle').textContent=S.title||'Dompet Keluarga'; document.title=S.title||'Dompet Keluarga';
+  $('#appTitle').textContent=S.title||'Dompet Mami Uci'; document.title=S.title||'Dompet Mami Uci';
   $$('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.p===P.t));
   $('#plabel').textContent=plabel(P.t,P.off); $('#next').style.visibility=P.off<0?'visible':'hidden';
   const r=range(P.t,P.off), L=txIn(r), out=L.filter(x=>x.k==='out'), inc=L.filter(x=>x.k==='in');
@@ -637,24 +645,22 @@ function render(){
   const tTun=sum(out.filter(x=>pmOf(x)==='tunai')), tNon=tOut-tTun;
   $('#pmRow').innerHTML=`<div>💵 Belanja tunai<b class="money">${rp(tTun)}</b></div><div>💳 Belanja non-tunai<b class="money">${rp(tNon)}</b></div>`;
   // dompet
-  $('#wals').innerHTML=Object.keys(WAL).map(w=>{ const v=walBal(w); return `<button class="src wal" data-w="${w}"><div class="hd"><span>${WAL[w].e}</span>${WAL[w].n}</div><div class="sisa money ${v<0?'neg':''}">${rp(v)}</div><div class="for">saldo sekarang · ketuk untuk riwayat</div></button>`; }).join('');
+  $('#wals').innerHTML=Object.keys(WAL).map(w=>{ const v=walBal(w); return `<button class="src wal" data-w="${w}"><div class="hd"><span>${WAL[w].e}</span>${WAL[w].n}</div><div class="sisa money ${v<0?'neg':''}">${rp(v)}</div><div class="for">ketuk untuk riwayat</div></button>`; }).join('');
   $$('#wals .src').forEach(b=>b.onclick=()=>{ fCat='w:'+b.dataset.w; showView('vList'); });
   // sumber dana
   $('#srcs').innerHTML=SS.map(({s,vi,vo,carry,est,base,sisa})=>{ const p=base>0?vo/base*100:(vo?100:0);
     const fo=S.cats.filter(c=>c.s===s.id).map(c=>c.e+' '+esc(c.n)).join(', ')||'— belum ada peruntukan';
     return `<button class="src" data-s="${s.id}"><div class="hd"><span>${s.e}</span>${esc(s.n)}</div>
-      <div class="sisa money ${sisa<0?'neg':''}">${rp(sisa)}</div><div class="ln"><span>${est?'sisa dari perkiraan':'sisa'}</span></div>
+      <div class="sisa money ${sisa<0?'neg':''}">${rp(sisa)}</div>
       <div class="bar"><i class="${p>100?'over':p>80?'warn':''}" style="width:${Math.min(100,p)}%"></i></div>
-      ${carry?`<div class="ln"><span>Sisa lalu</span><b class="money">${rp(carry)}</b></div>`:''}
-      <div class="ln"><span>Masuk</span><b class="money">${vi?rp(vi):(est?'± '+rpS(est):'belum dicatat')}</b></div><div class="ln"><span>Terpakai</span><b class="money">${rp(vo)}</b></div>
-      <div class="for">Untuk: ${fo}</div></button>`; }).join('');
+      <div class="ln"><span>Masuk${carry?' + sisa lalu':''}</span><b class="money">${vi||carry?rpS(vi+carry):(est?'± '+rpS(est):'–')}</b></div><div class="ln"><span>Terpakai</span><b class="money">${rpS(vo)}</b></div></button>`; }).join('');
   $$('#srcs .src').forEach(b=>b.onclick=()=>{ fCat='s:'+b.dataset.s; showView('vList'); });
   renderBillMini(); renderGoalMini();
   // kategori
   $('#cats').innerHTML=S.cats.map(k=>{ const v=sum(out.filter(x=>x.c===k.id)); const pc=tOut?Math.round(v/tOut*100):0; const b=(+k.b||0)*fac;
     const bp=b?v/b*100:0; return `<button class="cat" data-c="${k.id}"><div class="ic" style="background:color-mix(in srgb,${colOf(k)} 28%,transparent)">${k.e}</div><span class="pc">${pc}%</span><div class="nm">${esc(k.n)}</div><div class="am money">${rp(v)}</div>${b?`<div class="bar"><i class="${bp>100?'over':bp>80?'warn':''}" style="width:${Math.min(100,bp)}%;background:${bp>80?'':colOf(k)}"></i></div><small>dari ${rpS(b)}</small>`:''}</button>`; }).join('');
   $$('#cats .cat').forEach(b=>b.onclick=()=>{ fCat=b.dataset.c; showView('vList'); });
-  $('#recent').innerHTML=L.length?dayGroups(L.slice().sort(sortTx).slice(0,40)):`<div class="empty"><b>📝</b>Belum ada catatan ${P.t==='m'?'bulan':'minggu'} ini.<br>Tekan <b>＋</b> untuk mencatat, atau <b>📋 Tempel</b> untuk memasukkan catatan lama.</div>`;
+  $('#recent').innerHTML=L.length?dayGroups(L.slice().sort(sortTx).slice(0,15)):`<div class="empty"><b>📝</b>Belum ada catatan ${P.t==='m'?'bulan':'minggu'} ini.<br>Tekan <b>＋</b> untuk mencatat, atau <b>📋 Tempel</b> untuk memasukkan catatan lama.</div>`;
   bindItems('#recent');
   if(!$('#vList').classList.contains('hide')) renderList();
   if(!$('#vRep').classList.contains('hide')) renderRep();
@@ -727,7 +733,7 @@ function renderYear(){ $('#yLbl').textContent=REPY; $('#yNext').style.visibility
     <div class="lb" style="margin-top:10px">Per kategori setahun</div><table>${S.cats.map(k=>({k,v:sum(allOut.filter(x=>x.c===k.id))})).filter(z=>z.v).sort((a,b)=>b.v-a.v).map(z=>`<tr><td>${z.k.e} ${esc(z.k.n)}</td><td class="money">${rp(z.v)}</td><td>${Math.round(z.v/to*100)}%</td></tr>`).join('')}</table>`; }
 $('#yPrev').onclick=()=>{ REPY--; renderYear(); }; $('#yNext').onclick=()=>{ if(REPY<new Date().getFullYear()){ REPY++; renderYear(); } };
 $('#yShare').onclick=()=>{ const R=yearData(REPY), ti=R.reduce((a,x)=>a+x.i,0), to=R.reduce((a,x)=>a+x.o,0); const allOut=R.flatMap(x=>x.L.filter(t=>t.k==='out'));
-  const t=`📅 ${S.title||'Dompet Keluarga'} — Laporan ${REPY}\nPemasukan: ${rp(ti)}\nPengeluaran: ${rp(to)}\nSisa: ${rp(ti-to)}\n\nPer bulan:\n`+R.filter(x=>x.i||x.o).map(x=>`${BL3[x.m]}: masuk ${rpS(x.i)}, keluar ${rpS(x.o)}`).join('\n')
+  const t=`📅 ${S.title||'Dompet Mami Uci'} — Laporan ${REPY}\nPemasukan: ${rp(ti)}\nPengeluaran: ${rp(to)}\nSisa: ${rp(ti-to)}\n\nPer bulan:\n`+R.filter(x=>x.i||x.o).map(x=>`${BL3[x.m]}: masuk ${rpS(x.i)}, keluar ${rpS(x.o)}`).join('\n')
     +`\n\nPer kategori:\n`+S.cats.map(k=>({k,v:sum(allOut.filter(x=>x.c===k.id))})).filter(z=>z.v).sort((a,b)=>b.v-a.v).map(z=>`${z.k.e} ${z.k.n}: ${rp(z.v)}`).join('\n');
   shareText(t); };
 function shareText(t){ if(navigator.share) navigator.share({text:t}).catch(()=>{}); else { navigator.clipboard&&navigator.clipboard.writeText(t); toast('📋 Disalin'); } }
@@ -955,7 +961,7 @@ function icsEvent(it,t){ const now=new Date(), day=Math.min(+it.day||1,28); let 
   const left=t==='loan'?Math.max(1,(+it.tn)-loanPaid(it)):0; const what=t==='inc'?'💰 '+it.n+' masuk':(t==='loan'?'💳 Bayar ':'🧾 Bayar ')+it.n;
   return ['BEGIN:VEVENT','UID:'+it.id+'@dompet-keluarga','DTSTAMP:'+st,'DTSTART;VALUE=DATE:'+ds,'SUMMARY:'+what+' '+rp(it.a),'RRULE:FREQ=MONTHLY'+(left?';COUNT='+left:''),
     'BEGIN:VALARM','TRIGGER:-PT15H','ACTION:DISPLAY','DESCRIPTION:'+what,'END:VALARM','END:VEVENT'].join('\r\n'); }
-function openIcs(name,evs){ const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Dompet Keluarga//ID','CALSCALE:GREGORIAN','METHOD:PUBLISH',...evs,'END:VCALENDAR'].join('\r\n');
+function openIcs(name,evs){ const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Dompet Mami Uci//ID','CALSCALE:GREGORIAN','METHOD:PUBLISH',...evs,'END:VCALENDAR'].join('\r\n');
   const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   if(ios){ const w=window.open('data:text/calendar;charset=utf-8,'+encodeURIComponent(ics),'_blank'); if(!w) download(name+'.ics',ics,'text/calendar'); return; }
   download(name+'.ics',ics,'text/calendar'); toast('📅 Buka file pengingat untuk memasukkan ke Kalender'); }
@@ -986,7 +992,7 @@ async function renderLock(){ const box=$('#lockBox'), av=await bioAvail();
     <div class="row2" style="margin-top:8px"><button class="btn ghost" id="pinChg">Ubah PIN</button><button class="btn red" id="pinOff">Matikan kunci</button></div>`;
   $('#pinChg').onclick=async()=>{ if(await checkPin('Ubah PIN')) setPin(); };
   $('#pinOff').onclick=async()=>{ if(!await checkPin('Matikan kunci')) return; S.lock=null; save(); renderSet(); toast('🔓 Kunci dimatikan'); };
-  const sw=$('#bioSw'); if(sw) sw.onchange=async()=>{ if(sw.checked){ try{ const c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'Dompet Keluarga'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'dompet',displayName:S.name||'Dompet Keluarga'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000}}); S.lock.bio=b64(c.rawId); save(); toast('🙂 Face ID / sidik jari aktif'); }catch(e){ sw.checked=false; toast('Tidak bisa mengaktifkan di HP ini'); } } else { S.lock.bio=null; save(); } }; }
+  const sw=$('#bioSw'); if(sw) sw.onchange=async()=>{ if(sw.checked){ try{ const c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'Dompet Mami Uci'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'dompet',displayName:S.name||'Dompet Mami Uci'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000}}); S.lock.bio=b64(c.rawId); save(); toast('🙂 Face ID / sidik jari aktif'); }catch(e){ sw.checked=false; toast('Tidak bisa mengaktifkan di HP ini'); } } else { S.lock.bio=null; save(); } }; }
 
 /* ---------- atur ---------- */
 function renderSrcEdit(){
@@ -1009,7 +1015,7 @@ function renderSet(){ $('#setName').value=S.name||''; $('#setTitle').value=S.tit
     snap(); S.tx.forEach(x=>{ if(x.c===c.id) x.c=to.id; }); S.cats.splice(i,1); save(); renderSet(); render(); undoToast('🗑️ Kategori dihapus'); });
   $$('#optTheme button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.theme)); $('#optBig').checked=!!S.big; $('#optLite').checked=!!S.lite; $('#optBak').checked=!!S.bakRemind;
   $('#lastBak').textContent=S.lastBak?'Cadangan terakhir dikirim: '+new Date(S.lastBak).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'Belum pernah mengirim cadangan.';
-  $('#verTxt').textContent='Dompet Keluarga versi '+APP_VER; renderSnaps(); }
+  $('#verTxt').textContent='Dompet Mami Uci versi '+APP_VER; renderSnaps(); }
 async function renderSnaps(){ const ks=((await idbKeys('snaps'))||[]).sort().reverse(); const box=$('#snapList');
   if(!ks.length){ box.textContent='Belum ada. Cadangan otomatis dibuat sekali sehari saat aplikasi dibuka.'; return; }
   box.innerHTML=ks.map(k=>`<div class="snap"><span>${dayLabel(k)}</span><button class="chipb" data-snap="${k}">Pulihkan</button></div>`).join('');
@@ -1017,12 +1023,14 @@ async function renderSnaps(){ const ks=((await idbKeys('snaps'))||[]).sort().rev
     if(!await confirmA('Pulihkan ke kondisi '+dayLabel(k)+'?',`Isi aplikasi diganti dengan keadaan saat itu (${d.tx.length} catatan). Bisa diurungkan.`,'Pulihkan')) return;
     snap(); S=migrate(d); save(); renderSet(); render(); undoToast('✅ Dipulihkan ke '+dayLabel(k)); }); }
 $('#setName').onchange=e=>{ S.name=e.target.value.trim(); save(); render(); };
-$('#setTitle').onchange=e=>{ S.title=e.target.value.trim()||'Dompet Keluarga'; save(); render(); };
+$('#setTitle').onchange=e=>{ S.title=e.target.value.trim()||'Dompet Mami Uci'; save(); render(); };
 $('#addCat').onclick=()=>{ const used=S.cats.map(c=>c.c); S.cats.push({id:'k'+uid(),e:'🏷️',n:'Kategori baru',c:COLORS.find(c=>!used.includes(c))||'--c4',b:0,s:S.src[0].id}); save(); renderSet(); render(); };
 $$('#optTheme button').forEach(b=>b.onclick=()=>{ S.theme=b.dataset.v; save(); renderSet(); render(); });
 $('#optBig').onchange=e=>{ S.big=e.target.checked; save(); render(); }; $('#optLite').onchange=e=>{ S.lite=e.target.checked; save(); render(); }; $('#optBak').onchange=e=>{ S.bakRemind=e.target.checked; save(); };
 const mqL=window.matchMedia?matchMedia('(prefers-color-scheme: light)'):null; if(mqL&&mqL.addEventListener) mqL.addEventListener('change',()=>applyLook());
-function applyLook(){ const light=S.theme==='light'||(S.theme==='auto'&&mqL&&mqL.matches); document.body.classList.toggle('light',!!light); document.body.classList.toggle('lite',!!S.lite); document.body.classList.toggle('bigtext',!!S.big); }
+function applyLook(){ const light=S.theme==='light'||(S.theme==='auto'&&mqL&&mqL.matches); document.body.classList.toggle('light',!!light);
+  const ht=$('#hTheme'); if(ht){ ht.textContent=light?'🌙':'☀️'; ht.setAttribute('aria-label',light?'Ganti ke mode gelap':'Ganti ke mode terang'); }
+  const mt=document.querySelector('meta[name=theme-color]'); if(mt) mt.content=light?'#1d74e0':'#1565c0'; document.body.classList.toggle('lite',!!S.lite); document.body.classList.toggle('bigtext',!!S.big); }
 function download(name,data,type){ const b=new Blob([data],{type}); let f=null; try{ f=new File([b],name,{type}); }catch(_){}
   if(f&&navigator.canShare&&navigator.canShare({files:[f]})){ navigator.share({files:[f],title:name}).catch(()=>{}); return; }
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000); }
@@ -1043,7 +1051,7 @@ $('#fileIn').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new
   save(); renderSet(); render(); undoToast('✅ Cadangan digabung'); }catch(_){ toast('File cadangan tidak dikenali'); } }; r.readAsText(f); e.target.value=''; };
 $('#shareTxt').onclick=()=>{ const r=range(P.t,P.off), L=txIn(r), out=L.filter(x=>x.k==='out'), tot=sum(out), inc=L.filter(x=>x.k==='in'), tun=sum(out.filter(x=>pmOf(x)==='tunai'));
   const R=billRows(billYM()), un=R.filter(x=>!x.paid);
-  const t=`💰 ${S.title||'Dompet Keluarga'} — ${plabel(P.t,P.off)}\nPengeluaran: ${rp(tot)} (💵 tunai ${rp(tun)} · 💳 non-tunai ${rp(tot-tun)})\n`
+  const t=`💰 ${S.title||'Dompet Mami Uci'} — ${plabel(P.t,P.off)}\nPengeluaran: ${rp(tot)} (💵 tunai ${rp(tun)} · 💳 non-tunai ${rp(tot-tun)})\n`
     +S.cats.map(k=>{ const v=sum(out.filter(x=>x.c===k.id)); return v?`${k.e} ${k.n}: ${rp(v)}`:''; }).filter(Boolean).join('\n')
     +`\n\nPemasukan: ${rp(sum(inc))}\n`+S.src.map(s=>{ const st=srcState(s,r,L); return `${s.e} ${s.n}: masuk ${rp(st.vi)}${st.carry?`, sisa lalu ${rp(st.carry)}`:''}, terpakai ${rp(st.vo)}, sisa ${rp(st.sisa)}`; }).join('\n')
     +`\n\n👛 Saldo sekarang: 💵 tunai ${rp(walBal('tunai'))} · 💳 rekening ${rp(walBal('nontunai'))}`
@@ -1067,7 +1075,8 @@ function showView(v){ ['vHome','vList','vBill','vRep','vSet'].forEach(id=>$('#'+
   if(v==='vList') renderList(); if(v==='vRep') renderRep(); if(v==='vSet') renderSet(); if(v==='vBill') renderBill(); window.scrollTo({top:0}); }
 $$('nav.tabs [data-v]').forEach(b=>b.onclick=()=>{ if(b.dataset.v!=='vList') fCat=''; showView(b.dataset.v); });
 $('#fab').onclick=()=>openAdd(); $('#btnPaste').onclick=()=>show('#shPaste');
-$('#hAdd').onclick=()=>openAdd(); $('#hSet').onclick=()=>showView('vSet');
+$('#hAdd').onclick=()=>openAdd();
+$('#hTheme').onclick=()=>{ const light=document.body.classList.contains('light'); S.theme=light?'dark':'light'; save(); applyLook(); if(!$('#vSet').classList.contains('hide')) renderSet(); toast(light?'🌙 Mode gelap':'☀️ Mode terang'); }; $('#hSet').onclick=()=>showView('vSet');
 $('#eye').onclick=()=>{ S.hideAmt=!S.hideAmt; save(); render(); };
 $('#heroSpent').onclick=()=>showView('vRep');
 const scrollTo_=sel=>setTimeout(()=>{ const el=$(sel); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },80);
