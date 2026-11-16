@@ -243,6 +243,11 @@ body.light{--sheet:rgba(248,250,253,.82)}
 body.light .tile span,body.light .gbtn.act span{filter:none}
 body.light .bh,body.light .sum .row3>div{border-color:rgba(15,27,45,.06)}
 body.light .it{border-bottom-color:rgba(15,27,45,.06)}
+/* v3.3 */
+.start .stp{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 2px;border-top:1px solid var(--line);font-size:14.5px;font-weight:600}
+.start .stp span{font-size:16px}.start .stp b{margin-left:auto;color:var(--mute)}.start .stp.ok{color:var(--mute);text-decoration:line-through}
+.start .x{width:30px;height:30px;font-size:13px}
+#startBox .card{margin:0 0 12px}
 </style>
 </head>
 <body>
@@ -271,6 +276,7 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
 <main class="wrap">
   <!-- RINGKASAN -->
   <section id="vHome">
+    <div id="startBox" class="hide"></div>
     <div class="panel quick" id="quick">
       <button class="tile" data-q="in"><span>💰</span>Uang Masuk</button>
       <button class="tile" data-q="tr"><span>🔁</span>Pindah Dana</button>
@@ -341,6 +347,7 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
     <div class="card"><h4>👤 Nama</h4>
       <div class="fld"><input id="setName" placeholder="Nama pemakai, mis. Mami Uci"></div>
       <div class="fld"><input id="setTitle" placeholder="Judul aplikasi"></div></div>
+    <div class="card"><h4>🎬 Panduan penggunaan</h4><div class="mute" style="margin-bottom:8px">Video singkat cara memakai aplikasi ini (±1,5 menit, tanpa suara).</div><button class="btn ghost" id="openGuide">▶️ Putar video panduan</button></div>
     <div class="card" id="lockCard"><h4>🔒 Kunci aplikasi</h4><div id="lockBox"></div></div>
     <div class="card" id="walCard"><h4>👛 Saldo uang tunai & rekening</h4>
       <div class="mute" style="margin-bottom:8px">Isi jumlah uang yang <b>benar-benar ada sekarang</b>. Aplikasi menyesuaikan hitungannya otomatis. Cocokkan ulang kapan saja kalau ada selisih.</div><div id="walEdit"></div></div>
@@ -445,6 +452,14 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
   <div class="row2" style="margin-top:8px"><button class="btn ghost" id="askNo">Batal</button><button class="btn" id="askOk">OK</button></div>
 </div></div>
 
+<!-- sheet: video panduan -->
+<div class="sheet" id="shGuide"><div class="pn">
+  <div class="grab"></div>
+  <div class="ph"><h2>🎬 Panduan Dompet Mami Uci</h2><button class="x" data-close>✕</button></div>
+  <video id="guideV" src="panduan.mp4" controls playsinline preload="none" poster="panduan-cover.jpg" style="width:100%;max-height:72vh;border-radius:18px;background:#000"></video>
+  <div class="mute" style="margin-top:8px">Kalau video tidak mau jalan, pastikan HP tersambung internet saat pertama kali memutarnya.</div>
+</div></div>
+
 <!-- sheet: foto -->
 <div class="sheet" id="shPhoto"><div class="pn">
   <div class="grab"></div>
@@ -471,6 +486,7 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
   <div class="grab"></div>
   <div class="ph"><h2>✨ Apa yang baru</h2><button class="x" data-close>✕</button></div>
   <ul class="newl">
+    <li>🎬 <b>Video panduan</b> di ⚙️ Atur, dan daftar <b>🚀 Mulai di sini</b> di beranda.</li>
     <li>🙂 <b>Buka dengan Face ID</b> — tidak perlu ketik PIN lagi. Aktifkan di ⚙️ Atur › Kunci aplikasi.</li>
     <li>✨ <b>Nama baru: Dompet Mami Uci.</b> Tombol <b>🌙 / ☀️</b> di pojok atas untuk ganti mode gelap & terang. Beranda dibuat lebih ringkas.</li>
     <li>🔒 <b>Kunci PIN</b> (bisa juga Face ID / sidik jari) — buka ⚙️ Atur.</li>
@@ -500,7 +516,7 @@ body.light .it{border-bottom-color:rgba(15,27,45,.06)}
 <script>
 (()=>{
 'use strict';
-const APP_VER='3.2';
+const APP_VER='3.3';
 const KEY='dompetKeluarga_v1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const DEF_CATS=[{id:'rumah',e:'🏠',n:'Kebutuhan Rumah',c:'--c0',b:0,s:'s1'},{id:'anak',e:'🧒',n:'Kebutuhan Anak',c:'--c1',b:0,s:'s1'},{id:'jajan',e:'🍡',n:'Jajan',c:'--c2',b:0,s:'s2'},{id:'lain',e:'📦',n:'Lain-lain (tidak rutin)',c:'--c3',b:0,s:'s2'},{id:'rutin',e:'🧾',n:'Pengeluaran Rutin',c:'--c4',b:0,s:'s1'},{id:'cicil',e:'💳',n:'Cicilan',c:'--c6',b:0,s:'s1'}];
@@ -531,7 +547,7 @@ function load(){ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)); }catc
 function migrate(s){ s.cats=s.cats||clone(DEF_CATS); s.src=s.src||clone(DEF_SRC); s.bills=s.bills||[]; s.loans=s.loans||[]; s.incs=s.incs||[]; s.goals=s.goals||[];
   if(!s.title||s.title==='Dompet Keluarga') s.title='Dompet Mami Uci'; s.pm=s.pm||'tunai'; s.pmIn=s.pmIn||'nontunai'; s.wal=s.wal||{tunai:0,nontunai:0}; s.theme=s.theme||'dark';
   if(s.onb===undefined) s.onb=s.tx.length>0||!!s.name; if(s.bakRemind===undefined) s.bakRemind=true;
-  s.src.forEach(x=>{ if(x.carry===undefined) x.carry=true; });
+  s.src.forEach(x=>{ if(x.carry===undefined) x.carry=true; }); if(s.walSet===undefined) s.walSet=!!(s.wal.tunai||s.wal.nontunai);
   ['rutin','cicil'].forEach(id=>{ if(!s.cats.some(c=>c.id===id)){ const d=clone(DEF_CATS.find(c=>c.id===id)); const used=s.cats.map(c=>c.c); if(used.includes(d.c)) d.c=COLORS.find(c=>!used.includes(c))||d.c; s.cats.push(d); } });
   s.cats.forEach(c=>{ if(!c.s||!s.src.some(x=>x.id===c.s)) c.s=({jajan:'s2',lain:'s2'})[c.id]||s.src[0].id; });
   return s; }
@@ -579,7 +595,7 @@ function ask(o){ return new Promise(res=>{ if(ASK) ASK.res(null); ASK={res,o}; c
       :`<input data-i="${i}" ${f.type==='num'?'inputmode="numeric"':''} ${f.type==='pin'?'type="password" inputmode="numeric" maxlength="6" autocomplete="off"':''} placeholder="${esc(f.p||'')}" value="${esc(f.v==null?'':(f.type==='num'&&f.v?(+f.v).toLocaleString('id-ID'):f.v))}">`)+`</div>`).join('');
   $$('#askF input[inputmode="numeric"]:not([type=password])').forEach(inp=>inp.addEventListener('input',()=>{ const v=num(inp.value); inp.value=v?v.toLocaleString('id-ID'):''; }));
   $('#askOk').textContent=o.ok||'OK'; $('#askOk').className='btn'+(o.danger?' danger':''); $('#askNo').textContent=o.no||'Batal'; $('#askNo').classList.toggle('hide',o.no===false);
-  show('#shAsk'); if(F.length) setTimeout(()=>{ const f=$('#askF input'); if(f) f.focus(); },320); }); }
+  show('#shAsk'); if(F.length) setTimeout(()=>{ const f=$('#askF input'); if(f){ f.focus(); try{ f.select(); }catch(_){} } },320); }); }
 function askDone(ok){ if(!ASK) return; const {res,o}=ASK; ASK=null; hide('#shAsk'); if(!ok) return res(null); const F=o.f||[]; if(!F.length) return res(true);
   const out={}; F.forEach((f,i)=>{ const el=$(`#askF [data-i="${i}"]`); out[f.id]=f.type==='num'?num(el.value):el.value.trim(); }); res(out); }
 $('#askOk').onclick=()=>askDone(true); $('#askNo').onclick=()=>askDone(false);
@@ -646,7 +662,9 @@ function render(){
   const tTun=sum(out.filter(x=>pmOf(x)==='tunai')), tNon=tOut-tTun;
   $('#pmRow').innerHTML=`<div>💵 Belanja tunai<b class="money">${rp(tTun)}</b></div><div>💳 Belanja non-tunai<b class="money">${rp(tNon)}</b></div>`;
   // dompet
-  $('#wals').innerHTML=Object.keys(WAL).map(w=>{ const v=walBal(w); return `<button class="src wal" data-w="${w}"><div class="hd"><span>${WAL[w].e}</span>${WAL[w].n}</div><div class="sisa money ${v<0?'neg':''}">${rp(v)}</div><div class="for">ketuk untuk riwayat</div></button>`; }).join('');
+  $('#wals').innerHTML=Object.keys(WAL).map(w=>{ const v=walBal(w); return `<button class="src wal" data-w="${w}"><div class="hd"><span>${WAL[w].e}</span>${WAL[w].n}</div><div class="sisa money ${v<0?'neg':''}">${rp(v)}</div><div class="for">${v<0?'⚠️ minus? ketuk <b>Atur saldo</b> di bawah':'ketuk untuk riwayat'}</div></button>`; }).join('')
+    +(Object.keys(WAL).some(w=>walBal(w)<0)?`<button class="chipb" id="fixWal" style="grid-column:1/-1">👛 Atur saldo uang yang ada sekarang</button>`:'');
+  const fw=$('#fixWal'); if(fw) fw.onclick=()=>{ showView('vSet'); scrollTo_('#walCard'); };
   $$('#wals .src').forEach(b=>b.onclick=()=>{ fCat='w:'+b.dataset.w; showView('vList'); });
   // sumber dana
   $('#srcs').innerHTML=SS.map(({s,vi,vo,carry,est,base,sisa})=>{ const p=base>0?vo/base*100:(vo?100:0);
@@ -656,7 +674,7 @@ function render(){
       <div class="bar"><i class="${p>100?'over':p>80?'warn':''}" style="width:${Math.min(100,p)}%"></i></div>
       <div class="ln"><span>Masuk${carry?' + sisa lalu':''}</span><b class="money">${vi||carry?rpS(vi+carry):(est?'± '+rpS(est):'–')}</b></div><div class="ln"><span>Terpakai</span><b class="money">${rpS(vo)}</b></div></button>`; }).join('');
   $$('#srcs .src').forEach(b=>b.onclick=()=>{ fCat='s:'+b.dataset.s; showView('vList'); });
-  renderBillMini(); renderGoalMini();
+  renderBillMini(); renderGoalMini(); renderStart();
   // kategori
   $('#cats').innerHTML=S.cats.map(k=>{ const v=sum(out.filter(x=>x.c===k.id)); const pc=tOut?Math.round(v/tOut*100):0; const b=(+k.b||0)*fac;
     const bp=b?v/b*100:0; return `<button class="cat" data-c="${k.id}"><div class="ic" style="background:color-mix(in srgb,${colOf(k)} 28%,transparent)">${k.e}</div><span class="pc">${pc}%</span><div class="nm">${esc(k.n)}</div><div class="am money">${rp(v)}</div>${b?`<div class="bar"><i class="${bp>100?'over':bp>80?'warn':''}" style="width:${Math.min(100,bp)}%;background:${bp>80?'':colOf(k)}"></i></div><small>dari ${rpS(b)}</small>`:''}</button>`; }).join('');
@@ -682,6 +700,20 @@ function itemHTML(x){
 function bindItems(sel){ $$(sel+' .it').forEach(b=>b.onclick=()=>{ const x=S.tx.find(z=>z.id===b.dataset.id); if(!x) return; if(x.k==='sv') return svItem(x); openAdd(x); }); }
 async function svItem(x){ const ok=await confirmA('Hapus catatan tabungan?',`${x.a>0?'Setor':'Ambil'} ${rp(Math.abs(x.a))} pada ${dayLabel(x.d)}.`,'Hapus',true); if(!ok) return;
   snap(); S.tx=S.tx.filter(z=>z.id!==x.id); save(); render(); undoToast('🗑️ Dihapus'); }
+
+function renderStart(){ const box=$('#startBox'); const T=[
+    ['wal','👛 Isi saldo uang yang ada sekarang',!!S.walSet,()=>{ showView('vSet'); scrollTo_('#walCard'); }],
+    ['bill','🧾 Masukkan tagihan & cicilan rutin',!!(S.bills.length||S.loans.length),()=>showView('vBill')],
+    ['lock','🔒 Pasang PIN / Face ID',!!S.lock,()=>{ showView('vSet'); scrollTo_('#lockCard'); }],
+    ['bak','💾 Kirim cadangan pertama',!!S.lastBak,()=>{ showView('vSet'); scrollTo_('#bakCard'); }],
+    ['vid','🎬 Tonton video panduan (1 menit)',!!S.sawGuide,()=>openGuide()]];
+  const done=T.filter(t=>t[2]).length; if(S.hideStart||done===T.length){ box.classList.add('hide'); return; }
+  box.classList.remove('hide');
+  box.innerHTML=`<div class="card start"><div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0">🚀 Mulai di sini · ${done}/${T.length}</h4><button class="x" id="stX" aria-label="Tutup">✕</button></div>
+    <div class="bar" style="margin:8px 0 6px"><i style="width:${done/T.length*100}%"></i></div>${T.map(t=>`<button class="stp ${t[2]?'ok':''}" data-st="${t[0]}"><span>${t[2]?'✅':'⬜'}</span>${t[1]}<b>›</b></button>`).join('')}</div>`;
+  $$('#startBox [data-st]').forEach(b=>b.onclick=()=>T.find(t=>t[0]===b.dataset.st)[3]());
+  $('#stX').onclick=()=>{ S.hideStart=true; save(); renderStart(); toast('Daftar disembunyikan — panduan tetap ada di ⚙️ Atur'); }; }
+function openGuide(){ S.sawGuide=true; save(); const v=$('#guideV'); show('#shGuide'); try{ v.currentTime=0; v.play().catch(()=>{}); }catch(_){} render(); }
 
 /* ---------- riwayat ---------- */
 let fCat='';
@@ -848,7 +880,7 @@ const billYM=()=>ymOf(P.t==='m'?range('m',P.off)[0]:new Date());
 const paidTx=(t,id,ym)=>S.tx.find(x=>x.ref&&x.ref.t===t&&x.ref.id===id&&x.ref.ym===ym);
 const loanPaid=l=>(+l.pp||0)+S.tx.filter(x=>x.ref&&x.ref.t==='loan'&&x.ref.id===l.id).length;
 const loanIdx=(l,ym)=>ymDiff(l.st,ym)+1;
-function dueState(day,ym){ const now=new Date(), cur=ymOf(now), d=Math.min(+day||1,28);
+function dueState(day,ym){ const now=new Date(), cur=ymOf(now), d=Math.min(+day||1,new Date(now.getFullYear(),now.getMonth()+1,0).getDate());
   if(ym<cur) return 'late'; if(ym>cur) return 'soon'; return now.getDate()>d?'late':(d-now.getDate()<=3?'near':'soon'); }
 function billRows(ym){ const R=[];
   S.bills.forEach(b=>R.push({t:'bill',it:b,a:b.a,paid:paidTx('bill',b.id,ym)}));
@@ -1014,7 +1046,7 @@ function renderSrcEdit(){
     if(c.s===s.id){ const other=S.src.find(z=>z.id!==s.id); if(!other) return; c.s=other.id; toast(`${c.n} dipindah ke ${other.n}`); } else c.s=s.id; save(); renderSrcEdit(); render(); }); }
 function renderWalEdit(){ $('#walEdit').innerHTML=Object.keys(WAL).map(w=>`<label class="lb">${WAL[w].e} ${WAL[w].n} sekarang (Rp)</label><div class="fld"><input data-w="${w}" inputmode="numeric" value="${Math.round(walBal(w)).toLocaleString('id-ID')}"></div>`).join('');
   $$('#walEdit input').forEach(inp=>{ inp.oninput=()=>{ const neg=/^-/.test(inp.value.trim()); const v=num(inp.value); inp.value=(neg?'-':'')+(v?v.toLocaleString('id-ID'):''); };
-    inp.onchange=()=>{ const w=inp.dataset.w; const v=(/^-/.test(inp.value.trim())?-1:1)*num(inp.value); S.wal[w]=(+S.wal[w]||0)+v-walBal(w); save(); render(); toast('✅ Saldo '+WAL[w].n+' disesuaikan'); }; }); }
+    inp.onchange=()=>{ const w=inp.dataset.w; const v=(/^-/.test(inp.value.trim())?-1:1)*num(inp.value); S.wal[w]=(+S.wal[w]||0)+v-walBal(w); S.walSet=true; save(); render(); toast('✅ Saldo '+WAL[w].n+' disesuaikan'); }; }); }
 function renderSet(){ $('#setName').value=S.name||''; $('#setTitle').value=S.title||''; renderSrcEdit(); renderWalEdit(); renderLock();
   $('#catEdit').innerHTML=S.cats.map((c,i)=>`<div class="catedit"><input class="e" data-i="${i}" data-f="e" value="${esc(c.e)}" maxlength="4"><input class="n" data-i="${i}" data-f="n" value="${esc(c.n)}" maxlength="28"><input class="b" data-i="${i}" data-f="b" inputmode="numeric" placeholder="Anggaran" value="${c.b?(+c.b).toLocaleString('id-ID'):''}"><button data-del="${i}" aria-label="Hapus">🗑️</button></div>`).join('');
   $$('#catEdit input').forEach(inp=>inp.onchange=()=>{ const c=S.cats[+inp.dataset.i], f=inp.dataset.f; if(f==='b'){ c.b=num(inp.value); inp.value=c.b?c.b.toLocaleString('id-ID'):''; } else c[f]=inp.value.trim()||c[f]; save(); render(); });
@@ -1074,11 +1106,12 @@ $('#wipe').onclick=async()=>{ if(!await confirmA('Hapus SEMUA catatan?','Semua c
 function fmtNum(inp){ inp.addEventListener('input',()=>{ const v=num(inp.value); inp.value=v?v.toLocaleString('id-ID'):''; }); }
 ['#obT','#obN'].forEach(s=>fmtNum($(s)));
 $('#obGo').onclick=()=>{ S.name=$('#obName').value.trim(); const n1=$('#obS1').value.trim(), n2=$('#obS2').value.trim(); if(n1) S.src[0].n=n1; if(n2&&S.src[1]) S.src[1].n=n2;
-  S.wal.tunai=num($('#obT').value); S.wal.nontunai=num($('#obN').value); S.onb=true; S.seenVer=APP_VER; save(); hide('#shOnb'); render(); toast('🎉 Siap dipakai!'); if($('#obPin').checked) setTimeout(setPin,400); };
+  S.wal.tunai=num($('#obT').value); S.wal.nontunai=num($('#obN').value); if(S.wal.tunai||S.wal.nontunai) S.walSet=true; S.onb=true; S.seenVer=APP_VER; save(); hide('#shOnb'); render(); toast('🎉 Siap dipakai!'); if($('#obPin').checked) setTimeout(setPin,400); };
 
 /* ---------- navigasi ---------- */
 function show(s){ $(s).classList.add('show'); }
-function hide(s){ $(s).classList.remove('show'); if(s==='#shNew'&&S.seenVer!==APP_VER){ S.seenVer=APP_VER; save(); } }
+$('#openGuide').onclick=()=>openGuide();
+function hide(s){ $(s).classList.remove('show'); if(s==='#shGuide'){ try{ $('#guideV').pause(); }catch(_){} } if(s==='#shNew'&&S.seenVer!==APP_VER){ S.seenVer=APP_VER; save(); } }
 $$('.sheet').forEach(sh=>{ sh.addEventListener('click',e=>{ if(sh.id==='shOnb') return; if(e.target===sh||e.target.closest('[data-close]')){ if(sh.id==='shAsk') askDone(false); else hide('#'+sh.id); } }); });
 function showView(v){ ['vHome','vList','vBill','vRep','vSet'].forEach(id=>$('#'+id).classList.toggle('hide',id!==v)); $$('nav.tabs [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(v==='vList') renderList(); if(v==='vRep') renderRep(); if(v==='vSet') renderSet(); if(v==='vBill') renderBill(); window.scrollTo({top:0}); }
